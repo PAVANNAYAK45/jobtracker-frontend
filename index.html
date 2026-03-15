@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Job Tracker</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f6f8;
+margin:0;
+padding:0;
+}
+
+header{
+background:#2c3e50;
+color:white;
+padding:20px;
+text-align:center;
+font-size:28px;
+}
+
+.container{
+width:80%;
+margin:auto;
+margin-top:30px;
+}
+
+form{
+background:white;
+padding:20px;
+border-radius:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+margin-bottom:30px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:4px;
+}
+
+button{
+background:#3498db;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+border-radius:5px;
+}
+
+button:hover{
+background:#2980b9;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+th{
+background:#34495e;
+color:white;
+}
+
+.delete{
+background:#e74c3c;
+}
+
+.delete:hover{
+background:#c0392b;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+Job Application Tracker
+</header>
+
+<div class="container">
+
+<h2>Add Job Application</h2>
+
+<form id="jobForm">
+
+<input type="text" id="companyName" placeholder="Company Name" required>
+
+<input type="text" id="jobRole" placeholder="Job Role" required>
+
+<input type="date" id="applicationDate" required>
+
+<select id="status">
+<option value="APPLIED">Applied</option>
+<option value="INTERVIEW">Interview</option>
+<option value="REJECTED">Rejected</option>
+<option value="OFFER">Offer</option>
+</select>
+
+<input type="text" id="notes" placeholder="Notes">
+
+<button type="submit">Add Job</button>
+
+</form>
+
+<h2>Applications</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Company</th>
+<th>Role</th>
+<th>Status</th>
+<th>Delete</th>
+</tr>
+</thead>
+
+<tbody id="jobTable"></tbody>
+
+</table>
+
+</div>
+
+
+<script>
+
+const API="https://jobtracker-4w3y.onrender.com/applications";
+
+
+document.getElementById("jobForm").addEventListener("submit",async function(e){
+
+e.preventDefault();
+
+const data={
+companyName:document.getElementById("companyName").value,
+jobRole:document.getElementById("jobRole").value,
+applicationDate:document.getElementById("applicationDate").value,
+status:document.getElementById("status").value,
+notes:document.getElementById("notes").value
+};
+
+await fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+});
+
+loadJobs();
+
+});
+
+
+async function loadJobs(){
+
+const res=await fetch(API);
+const jobs=await res.json();
+
+const table=document.getElementById("jobTable");
+
+table.innerHTML="";
+
+jobs.forEach(job=>{
+
+table.innerHTML+=`
+<tr>
+<td>${job.id}</td>
+<td>${job.companyName}</td>
+<td>${job.jobRole}</td>
+<td>${job.status}</td>
+<td>
+<button class="delete" onclick="deleteJob(${job.id})">Delete</button>
+</td>
+</tr>
+`;
+
+});
+
+}
+
+
+async function deleteJob(id){
+
+await fetch(API+"/"+id,{
+method:"DELETE"
+});
+
+loadJobs();
+
+}
+
+
+loadJobs();
+
+</script>
+
+</body>
+</html>
