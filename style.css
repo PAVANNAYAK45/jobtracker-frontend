@@ -4,6 +4,62 @@ margin:0;
 background:#f4f6f9;
 }
 
+/* AUTH PAGES */
+
+.auth-container{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.auth-card{
+background:white;
+padding:40px;
+border-radius:10px;
+width:350px;
+box-shadow:0 4px 20px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.auth-card h2{
+margin-bottom:20px;
+}
+
+.auth-card input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+.auth-card button{
+width:100%;
+padding:12px;
+background:#3498db;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+font-size:16px;
+}
+
+.auth-card button:hover{
+background:#2980b9;
+}
+
+.auth-card p{
+margin-top:15px;
+}
+
+.auth-card a{
+color:#3498db;
+text-decoration:none;
+}
+
+/* DASHBOARD */
+
 .navbar{
 background:#2c3e50;
 color:white;
@@ -21,10 +77,6 @@ color:white;
 padding:8px 18px;
 border-radius:5px;
 cursor:pointer;
-}
-
-.logout-btn:hover{
-background:#c0392b;
 }
 
 .container{
@@ -60,10 +112,6 @@ border-radius:5px;
 cursor:pointer;
 }
 
-.add-btn:hover{
-background:#2980b9;
-}
-
 table{
 width:100%;
 border-collapse:collapse;
@@ -79,17 +127,4 @@ text-align:center;
 th{
 background:#34495e;
 color:white;
-}
-
-.delete-btn{
-background:#e74c3c;
-border:none;
-color:white;
-padding:6px 12px;
-border-radius:4px;
-cursor:pointer;
-}
-
-.delete-btn:hover{
-background:#c0392b;
 }

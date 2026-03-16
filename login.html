@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>Login</title>
+<title>Login - Job Tracker</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="auth-container">
+
+<div class="auth-card">
 
 <h2>Login</h2>
 
@@ -19,9 +19,8 @@
 
 <button onclick="login()">Login</button>
 
-<div class="link">
-No account?
-<a href="register.html">Register</a>
+<p>No account? <a href="register.html">Register</a></p>
+
 </div>
 
 </div>
@@ -50,16 +49,10 @@ password:password
 
 })
 
-if(res.status===404){
+if(!res.ok){
 
 alert("No account found")
-return
 
-}
-
-if(res.status===401){
-
-alert("Wrong password")
 return
 
 }
