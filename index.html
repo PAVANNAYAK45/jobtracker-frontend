@@ -2,211 +2,133 @@
 <html>
 <head>
 <title>Job Tracker</title>
-
-<style>
-
-body{
-font-family: Arial;
-background:#f4f6f8;
-margin:0;
-padding:0;
-}
-
-header{
-background:#2c3e50;
-color:white;
-padding:20px;
-text-align:center;
-font-size:28px;
-}
-
-.container{
-width:80%;
-margin:auto;
-margin-top:30px;
-}
-
-form{
-background:white;
-padding:20px;
-border-radius:8px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-margin-bottom:30px;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:15px;
-border:1px solid #ccc;
-border-radius:4px;
-}
-
-button{
-background:#3498db;
-color:white;
-border:none;
-padding:10px 20px;
-cursor:pointer;
-border-radius:5px;
-}
-
-button:hover{
-background:#2980b9;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #ddd;
-text-align:center;
-}
-
-th{
-background:#34495e;
-color:white;
-}
-
-.delete{
-background:#e74c3c;
-}
-
-.delete:hover{
-background:#c0392b;
-}
-
-</style>
 </head>
 
 <body>
 
-<header>
-Job Application Tracker
-</header>
+<h2>Register</h2>
 
-<div class="container">
+<input id="regUser" placeholder="username">
+<input id="regPass" placeholder="password">
+<button onclick="register()">Register</button>
 
-<h2>Add Job Application</h2>
+<h2>Login</h2>
 
-<form id="jobForm">
+<input id="loginUser" placeholder="username">
+<input id="loginPass" placeholder="password">
+<button onclick="login()">Login</button>
 
-<input type="text" id="companyName" placeholder="Company Name" required>
+<hr>
 
-<input type="text" id="jobRole" placeholder="Job Role" required>
+<h2>Add Job</h2>
 
-<input type="date" id="applicationDate" required>
+<input id="company">
+<input id="role">
+<input id="date">
+<input id="notes">
 
-<select id="status">
-<option value="APPLIED">Applied</option>
-<option value="INTERVIEW">Interview</option>
-<option value="REJECTED">Rejected</option>
-<option value="OFFER">Offer</option>
-</select>
+<button onclick="addJob()">Add</button>
 
-<input type="text" id="notes" placeholder="Notes">
+<h2>Jobs</h2>
 
-<button type="submit">Add Job</button>
-
-</form>
-
-<h2>Applications</h2>
-
-<table>
-
-<thead>
-<tr>
-<th>ID</th>
-<th>Company</th>
-<th>Role</th>
-<th>Status</th>
-<th>Delete</th>
-</tr>
-</thead>
-
-<tbody id="jobTable"></tbody>
-
-</table>
-
-</div>
-
+<ul id="jobs"></ul>
 
 <script>
 
-const API="https://jobtracker-4w3y.onrender.com/applications";
+const API="https://jobtracker-4w3y.onrender.com"
 
+let currentUser=""
 
-document.getElementById("jobForm").addEventListener("submit",async function(e){
+async function register(){
 
-e.preventDefault();
+await fetch(API+"/auth/register",{
 
-const data={
-companyName:document.getElementById("companyName").value,
-jobRole:document.getElementById("jobRole").value,
-applicationDate:document.getElementById("applicationDate").value,
-status:document.getElementById("status").value,
-notes:document.getElementById("notes").value
-};
-
-await fetch(API,{
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
-body:JSON.stringify(data)
-});
 
-loadJobs();
+body:JSON.stringify({
 
-});
+username:document.getElementById("regUser").value,
+password:document.getElementById("regPass").value
 
+})
+
+})
+
+alert("registered")
+}
+
+async function login(){
+
+const res=await fetch(API+"/auth/login",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+username:document.getElementById("loginUser").value,
+password:document.getElementById("loginPass").value
+
+})
+
+})
+
+const user=await res.json()
+
+currentUser=user.username
+
+loadJobs()
+}
+
+async function addJob(){
+
+await fetch(API+"/applications/"+currentUser,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+companyName:document.getElementById("company").value,
+jobRole:document.getElementById("role").value,
+applicationDate:document.getElementById("date").value,
+status:"APPLIED",
+notes:document.getElementById("notes").value
+
+})
+
+})
+
+loadJobs()
+}
 
 async function loadJobs(){
 
-const res=await fetch(API);
-const jobs=await res.json();
+const res=await fetch(API+"/applications/"+currentUser)
 
-const table=document.getElementById("jobTable");
+const jobs=await res.json()
 
-table.innerHTML="";
+const list=document.getElementById("jobs")
 
-jobs.forEach(job=>{
+list.innerHTML=""
 
-table.innerHTML+=`
-<tr>
-<td>${job.id}</td>
-<td>${job.companyName}</td>
-<td>${job.jobRole}</td>
-<td>${job.status}</td>
-<td>
-<button class="delete" onclick="deleteJob(${job.id})">Delete</button>
-</td>
-</tr>
-`;
+jobs.forEach(j=>{
 
-});
+list.innerHTML+=`<li>${j.companyName} ${j.jobRole}</li>`
+
+})
 
 }
-
-
-async function deleteJob(id){
-
-await fetch(API+"/"+id,{
-method:"DELETE"
-});
-
-loadJobs();
-
-}
-
-
-loadJobs();
 
 </script>
 
