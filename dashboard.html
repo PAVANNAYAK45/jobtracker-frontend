@@ -32,6 +32,13 @@ Job Application Tracker
 
 <input type="date" id="date">
 
+<select id="status">
+<option value="APPLIED">Applied</option>
+<option value="INTERVIEW">Interview</option>
+<option value="REJECTED">Rejected</option>
+<option value="OFFER">Offer</option>
+</select>
+
 <input id="notes" placeholder="Notes">
 
 <button onclick="addJob()" class="add-btn">Add Job</button>
@@ -99,13 +106,13 @@ table.innerHTML+=`
 })
 
 }
-
 async function addJob(){
 
 const company=document.getElementById("company").value
 const role=document.getElementById("role").value
 const date=document.getElementById("date").value
 const notes=document.getElementById("notes").value
+const status=document.getElementById("status").value
 
 await fetch(API+"/applications",{
 
@@ -120,7 +127,7 @@ body:JSON.stringify({
 companyName:company,
 jobRole:role,
 applicationDate:date,
-status:"APPLIED",
+status:status,
 notes:notes
 
 })
