@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Job Tracker</title>
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -10,6 +12,8 @@
 <div class="navbar">
 
 Job Application Tracker
+
+<button class="logout" onclick="logout()">Logout</button>
 
 </div>
 
@@ -38,7 +42,6 @@ Job Application Tracker
 <table>
 
 <thead>
-
 <tr>
 <th>ID</th>
 <th>Company</th>
@@ -46,7 +49,6 @@ Job Application Tracker
 <th>Status</th>
 <th>Delete</th>
 </tr>
-
 </thead>
 
 <tbody id="jobs"></tbody>
@@ -60,7 +62,14 @@ Job Application Tracker
 <script>
 
 const API="https://jobtracker-4w3y.onrender.com"
+
 const username=localStorage.getItem("username")
+
+if(!username){
+
+window.location.href="login.html"
+
+}
 
 async function addJob(){
 
@@ -130,6 +139,14 @@ method:"DELETE"
 })
 
 loadJobs()
+
+}
+
+function logout(){
+
+localStorage.removeItem("username")
+
+window.location.href="login.html"
 
 }
 

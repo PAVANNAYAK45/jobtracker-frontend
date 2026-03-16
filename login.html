@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Login</title>
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -11,14 +13,14 @@
 
 <h2>Login</h2>
 
-<input id="username" placeholder="Email">
+<input id="email" placeholder="Email">
 
 <input id="password" type="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
 
 <div class="link">
-New to account?
+No account?
 <a href="register.html">Register</a>
 </div>
 
@@ -30,31 +32,39 @@ const API="https://jobtracker-4w3y.onrender.com"
 
 async function login(){
 
-const username=document.getElementById("username").value
+const email=document.getElementById("email").value
 const password=document.getElementById("password").value
 
-const res = await fetch(API+"/auth/login",{
+const res=await fetch(API+"/auth/login",{
+
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify({
-username,
-password
-})
+username:email,
+password:password
 })
 
-if(res.status === 404){
+})
+
+if(res.status===404){
+
 alert("No account found")
 return
+
 }
 
-if(res.status === 401){
+if(res.status===401){
+
 alert("Wrong password")
 return
+
 }
 
-const user = await res.json()
+const user=await res.json()
 
 localStorage.setItem("username",user.username)
 
