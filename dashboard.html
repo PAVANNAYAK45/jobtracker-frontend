@@ -96,9 +96,9 @@ table.innerHTML+=`
 <td>${job.id}</td>
 <td>${job.companyName}</td>
 <td>${job.jobRole}</td>
-<td>${job.status}</td>
+<td>${job.status.charAt(0) + job.status.slice(1).toLowerCase()}</td>
 <td>
-<button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button>
+<button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button>
 </td>
 </tr>
 `
@@ -108,11 +108,11 @@ table.innerHTML+=`
 }
 async function addJob(){
 
-const companyName=document.getElementById("companyName").value
-const jobRole=document.getElementById("jobRole").value
-const applicationDate=document.getElementById("applicationDate").value
+const companyName=document.getElementById("companyName").value=""
+const jobRole=document.getElementById("jobRole").value=""
+const applicationDate=document.getElementById("applicationDate").value=""
 const status=document.getElementById("status").value
-const notes=document.getElementById("notes").value
+const notes=document.getElementById("notes").value=""
 
 await fetch("https://jobtracker-4w3y.onrender.com/applications",{
 
