@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>Job Tracker</title>
+<title>Dashboard - Job Tracker</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <div class="navbar">
 
+<div class="nav-left">
 Job Application Tracker
+</div>
 
-<button class="logout" onclick="logout()">Logout</button>
+<div class="nav-right">
+<button onclick="logout()" class="logout-btn">Logout</button>
+</div>
 
 </div>
 
-<div class="dashboard">
+
+<div class="container">
 
 <div class="card">
 
-<h3>Add Job</h3>
+<h2>Add Job</h2>
 
 <input id="company" placeholder="Company">
 
 <input id="role" placeholder="Role">
 
-<input id="date" type="date">
+<input type="date" id="date">
 
 <input id="notes" placeholder="Notes">
 
-<button onclick="addJob()">Add Job</button>
+<button onclick="addJob()" class="add-btn">Add Job</button>
 
 </div>
 
+
 <div class="card">
 
-<h3>Your Applications</h3>
+<h2>Your Applications</h2>
 
 <table>
 
@@ -51,7 +55,7 @@ Job Application Tracker
 </tr>
 </thead>
 
-<tbody id="jobs"></tbody>
+<tbody id="jobTable"></tbody>
 
 </table>
 
@@ -59,21 +63,51 @@ Job Application Tracker
 
 </div>
 
+
 <script>
 
 const API="https://jobtracker-4w3y.onrender.com"
 
-const username=localStorage.getItem("username")
+if(!localStorage.getItem("username")){
+window.location.href="index.html"
+}
 
-if(!username){
+async function loadJobs(){
 
-window.location.href="login.html"
+const res=await fetch(API+"/applications")
+
+const jobs=await res.json()
+
+const table=document.getElementById("jobTable")
+
+table.innerHTML=""
+
+jobs.forEach(job=>{
+
+table.innerHTML+=`
+<tr>
+<td>${job.id}</td>
+<td>${job.companyName}</td>
+<td>${job.jobRole}</td>
+<td>${job.status}</td>
+<td>
+<button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button>
+</td>
+</tr>
+`
+
+})
 
 }
 
 async function addJob(){
 
-await fetch(API+"/applications/"+username,{
+const company=document.getElementById("company").value
+const role=document.getElementById("role").value
+const date=document.getElementById("date").value
+const notes=document.getElementById("notes").value
+
+await fetch(API+"/applications",{
 
 method:"POST",
 
@@ -83,52 +117,17 @@ headers:{
 
 body:JSON.stringify({
 
-companyName:document.getElementById("company").value,
-jobRole:document.getElementById("role").value,
-applicationDate:document.getElementById("date").value,
+companyName:company,
+jobRole:role,
+applicationDate:date,
 status:"APPLIED",
-notes:document.getElementById("notes").value
+notes:notes
 
 })
 
 })
 
 loadJobs()
-
-}
-
-async function loadJobs(){
-
-const res=await fetch(API+"/applications/"+username)
-
-const jobs=await res.json()
-
-const table=document.getElementById("jobs")
-
-table.innerHTML=""
-
-jobs.forEach(j=>{
-
-table.innerHTML+=`
-
-<tr>
-
-<td>${j.id}</td>
-<td>${j.companyName}</td>
-<td>${j.jobRole}</td>
-<td>${j.status}</td>
-
-<td>
-<button class="delete" onclick="deleteJob(${j.id})">
-Delete
-</button>
-</td>
-
-</tr>
-
-`
-
-})
 
 }
 
@@ -146,7 +145,7 @@ function logout(){
 
 localStorage.removeItem("username")
 
-window.location.href="login.html"
+window.location.href="index.html"
 
 }
 
