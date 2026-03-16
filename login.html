@@ -33,31 +33,32 @@ async function login(){
 const username=document.getElementById("username").value
 const password=document.getElementById("password").value
 
-const res=await fetch(API+"/auth/login",{
-
+const res = await fetch(API+"/auth/login",{
 method:"POST",
-
 headers:{
 "Content-Type":"application/json"
 },
-
 body:JSON.stringify({
 username,
 password
 })
-
 })
 
-const user=await res.json()
-
-if(!user){
-alert("Invalid login")
+if(res.status === 404){
+alert("No account found")
 return
 }
 
+if(res.status === 401){
+alert("Wrong password")
+return
+}
+
+const user = await res.json()
+
 localStorage.setItem("username",user.username)
 
-window.location="dashboard.html"
+window.location.href="dashboard.html"
 
 }
 
