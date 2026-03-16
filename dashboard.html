@@ -1,162 +1,137 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<title>Job Tracker</title>
-<link rel="stylesheet" href="style.css">
-</head>
+  <head>
+    <title>Job Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
+  <body>
+    <div class="navbar">
+      <div class="nav-left">Job Application Tracker</div>
 
-<div class="navbar">
+      <div class="nav-right">
+        <button onclick="logout()" class="logout-btn">Logout</button>
+      </div>
+    </div>
 
-<div class="nav-left">
-Job Application Tracker
-</div>
+    <div class="container">
+      <div class="card">
+        <h2>Add Job</h2>
 
-<div class="nav-right">
-<button onclick="logout()" class="logout-btn">Logout</button>
-</div>
+        <input id="companyName" placeholder="Company" />
 
-</div>
+        <input id="jobRole" placeholder="Role" />
 
+        <input type="date" id="applicationDate" />
 
-<div class="container">
+        <select id="status">
+          <option value="APPLIED">Applied</option>
+          <option value="INTERVIEW">Interview</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="OFFER">Offer</option>
+        </select>
 
-<div class="card">
+        <input id="notes" placeholder="Notes" />
 
-<h2>Add Job</h2>
+        <button onclick="addJob()" class="add-btn">Add Job</button>
+      </div>
 
-<input id="companyName" placeholder="Company">
+      <div class="card">
+        <h2>Your Applications</h2>
 
-<input id="jobRole" placeholder="Role">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
 
-<input type="date" id="applicationDate">
+          <tbody id="jobTable"></tbody>
+        </table>
+      </div>
+    </div>
 
-<select id="status">
-<option value="APPLIED">Applied</option>
-<option value="INTERVIEW">Interview</option>
-<option value="REJECTED">Rejected</option>
-<option value="OFFER">Offer</option>
-</select>
+    <script>
+      const API = "https://jobtracker-4w3y.onrender.com";
 
-<input id="notes" placeholder="Notes">
+      if (!localStorage.getItem("username")) {
+        window.location.href = "index.html";
+      }
 
-<button onclick="addJob()" class="add-btn">Add Job</button>
+      function loadJobs() {
+ fetch("https://jobtracker-4w3y.onrender.com/applications")
+   .then(res => res.json())
+   .then(data => {
 
-</div>
+     const table = document.querySelector("#jobsTable tbody");
+     table.innerHTML = "";
 
+     data.forEach(job => {
 
-<div class="card">
+       const row = document.createElement("tr");
 
-<h2>Your Applications</h2>
+       row.innerHTML = `
+         <td>${job.id}</td>
+         <td>${job.companyName}</td>
+         <td>${job.jobRole}</td>
+         <td>${job.status}</td>
+         <td>
+           <button onclick="deleteJob(${job.id})">Delete</button>
+         </td>
+       `;
 
-<table>
+       table.appendChild(row);
 
-<thead>
-<tr>
-<th>ID</th>
-<th>Company</th>
-<th>Role</th>
-<th>Status</th>
-<th>Delete</th>
-</tr>
-</thead>
+     });
 
-<tbody id="jobTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-
-<script>
-
-const API="https://jobtracker-4w3y.onrender.com"
-
-if(!localStorage.getItem("username")){
-window.location.href="index.html"
+   });
 }
+      async function addJob() {
+        const companyName = document.getElementById("companyName").value;
+        const jobRole = document.getElementById("jobRole").value;
+        const applicationDate =
+          document.getElementById("applicationDate").value;
+        const status = document.getElementById("status").value;
+        const notes = document.getElementById("notes").value;
 
-async function loadJobs(){
+        await fetch("https://jobtracker-4w3y.onrender.com/applications", {
+          method: "POST",
 
-const res=await fetch(API+"/applications")
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-const jobs=await res.json()
+          body: JSON.stringify({
+            companyName: companyName,
+            jobRole: jobRole,
+            applicationDate: applicationDate,
+            status: status,
+            notes: notes,
+          }),
+        });
 
-const table=document.getElementById("jobTable")
+        loadJobs();
+      }
 
-table.innerHTML=""
+      async function deleteJob(id) {
+        await fetch(API + "/applications/" + id, {
+          method: "DELETE",
+        });
 
-jobs.forEach(job=>{
+        loadJobs();
+      }
 
-table.innerHTML+=`
-<tr>
-<td>${job.id}</td>
-<td>${job.companyName}</td>
-<td>${job.jobRole}</td>
-<td>${job.status.charAt(0) + job.status.slice(1).toLowerCase()}</td>
-<td>
-<button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button>
-</td>
-</tr>
-`
+      function logout() {
+        localStorage.removeItem("username");
 
-})
+        window.location.href = "index.html";
+      }
 
-}
-async function addJob(){
-
-const companyName=document.getElementById("companyName").value=""
-const jobRole=document.getElementById("jobRole").value=""
-const applicationDate=document.getElementById("applicationDate").value=""
-const status=document.getElementById("status").value
-const notes=document.getElementById("notes").value=""
-
-await fetch("https://jobtracker-4w3y.onrender.com/applications",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-companyName:companyName,
-jobRole:jobRole,
-applicationDate:applicationDate,
-status:status,
-notes:notes
-})
-
-})
-
-loadJobs()
-
-}
-
-async function deleteJob(id){
-
-await fetch(API+"/applications/"+id,{
-method:"DELETE"
-})
-
-loadJobs()
-
-}
-
-function logout(){
-
-localStorage.removeItem("username")
-
-window.location.href="index.html"
-
-}
-
-loadJobs()
-
-</script>
-
-</body>
+      loadJobs();
+    </script>
+  </body>
 </html>
