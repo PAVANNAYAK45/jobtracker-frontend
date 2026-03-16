@@ -50,7 +50,7 @@
             </tr>
           </thead>
 
-          <tbody id="jobTable"></tbody>
+          <tbody id="jobsTable"></tbody>
         </table>
       </div>
     </div>
@@ -61,62 +61,69 @@
       if (!localStorage.getItem("username")) {
         window.location.href = "index.html";
       }
+function loadJobs(){
 
-      function loadJobs() {
- fetch("https://jobtracker-4w3y.onrender.com/applications")
-   .then(res => res.json())
-   .then(data => {
+fetch("https://jobtracker-4w3y.onrender.com/applications")
+.then(res => res.json())
+.then(data => {
 
-     const table = document.querySelector("#jobsTable tbody");
-     table.innerHTML = "";
+const table = document.getElementById("jobsTable");
+table.innerHTML = "";
 
-     data.forEach(job => {
+data.forEach(job => {
 
-       const row = document.createElement("tr");
+const row = document.createElement("tr");
 
-       row.innerHTML = `
-         <td>${job.id}</td>
-         <td>${job.companyName}</td>
-         <td>${job.jobRole}</td>
-         <td>${job.status}</td>
-         <td>
-           <button onclick="deleteJob(${job.id})">Delete</button>
-         </td>
-       `;
+row.innerHTML = `
+<td>${job.id}</td>
+<td>${job.companyName}</td>
+<td>${job.jobRole}</td>
+<td>${job.status}</td>
+<td><button onclick="deleteJob(${job.id})">Delete</button></td>
+`;
 
-       table.appendChild(row);
+table.appendChild(row);
 
-     });
+});
 
-   });
+});
+
 }
-      async function addJob() {
-        const companyName = document.getElementById("companyName").value;
-        const jobRole = document.getElementById("jobRole").value;
-        const applicationDate =
-          document.getElementById("applicationDate").value;
-        const status = document.getElementById("status").value;
-        const notes = document.getElementById("notes").value;
 
-        await fetch("https://jobtracker-4w3y.onrender.com/applications", {
-          method: "POST",
+function addJob() {
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+const company = document.getElementById("company").value;
+const role = document.getElementById("role").value;
+const date = document.getElementById("date").value;
+const status = document.getElementById("status").value;
+const notes = document.getElementById("notes").value;
 
-          body: JSON.stringify({
-            companyName: companyName,
-            jobRole: jobRole,
-            applicationDate: applicationDate,
-            status: status,
-            notes: notes,
-          }),
-        });
+fetch(API + "/applications", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+companyName: company,
+jobRole: role,
+applicationDate: date,
+status: status.toUpperCase(),
+notes: notes
+})
+})
+.then(res => res.json())
+.then(data => {
 
-        loadJobs();
-      }
+alert("Job added");
 
+loadJobs();
+
+document.getElementById("company").value="";
+document.getElementById("role").value="";
+document.getElementById("notes").value="";
+
+});
+}
       async function deleteJob(id) {
         await fetch(API + "/applications/" + id, {
           method: "DELETE",
