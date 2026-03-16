@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Dashboard - Job Tracker</title>
+<title>Job Tracker</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -26,11 +26,11 @@ Job Application Tracker
 
 <h2>Add Job</h2>
 
-<input id="company" placeholder="Company">
+<input id="companyName" placeholder="Company">
 
-<input id="role" placeholder="Role">
+<input id="jobRole" placeholder="Role">
 
-<input type="date" id="date">
+<input type="date" id="applicationDate">
 
 <select id="status">
 <option value="APPLIED">Applied</option>
@@ -108,13 +108,13 @@ table.innerHTML+=`
 }
 async function addJob(){
 
-const company=document.getElementById("company").value
-const role=document.getElementById("role").value
-const date=document.getElementById("date").value
-const notes=document.getElementById("notes").value
+const companyName=document.getElementById("companyName").value
+const jobRole=document.getElementById("jobRole").value
+const applicationDate=document.getElementById("applicationDate").value
 const status=document.getElementById("status").value
+const notes=document.getElementById("notes").value
 
-await fetch(API+"/applications",{
+await fetch("https://jobtracker-4w3y.onrender.com/applications",{
 
 method:"POST",
 
@@ -123,13 +123,11 @@ headers:{
 },
 
 body:JSON.stringify({
-
-companyName:company,
-jobRole:role,
-applicationDate:date,
+companyName:companyName,
+jobRole:jobRole,
+applicationDate:applicationDate,
 status:status,
 notes:notes
-
 })
 
 })
