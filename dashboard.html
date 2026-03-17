@@ -54,20 +54,40 @@
 </div>
 
 <script>
-const API = "https://jobtracker-4w3y.onrender.com";
-const userId = localStorage.getItem("userId");
+console.log("JS STARTED");
 
-if (!userId) {
-  console.log("No user, redirecting...");
-  window.location.replace("index.html");
-}
+document.addEventListener("DOMContentLoaded", () => {
 
-function loadJobs() {
-  fetch(`${API}/applications/${userId}`)
+  console.log("DOM READY");
+
+  const userId = localStorage.getItem("userId");
+
+  if (!userId) {
+    console.log("No userId → redirect");
+    window.location.href = "index.html";
+    return;
+  }
+
+  loadJobs(userId);
+});
+
+function loadJobs(userId) {
+
+  console.log("Loading jobs for:", userId);
+
+  fetch("https://jobtracker-4w3y.onrender.com/applications/" + userId)
   .then(res => res.json())
   .then(data => {
 
+    console.log("Data:", data);
+
     const table = document.getElementById("jobsTable");
+
+    if (!table) {
+      console.error("Table not found");
+      return;
+    }
+
     table.innerHTML = "";
 
     data.forEach(job => {
@@ -78,50 +98,18 @@ function loadJobs() {
         <td>${job.companyName}</td>
         <td>${job.jobRole}</td>
         <td>${job.status}</td>
-        <td><button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button></td>
       `;
 
       table.appendChild(row);
     });
+
+  })
+  .catch(err => {
+    console.error("API ERROR:", err);
   });
 }
-
-function addJob() {
-
-  const company = document.getElementById("company").value;
-  const role = document.getElementById("role").value;
-  const date = document.getElementById("date").value;
-  const status = document.getElementById("status").value;
-  const notes = document.getElementById("notes").value;
-
-  fetch(`${API}/applications/${userId}`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      companyName: company,
-      jobRole: role,
-      applicationDate: date,
-      status: status,
-      notes: notes
-    })
-  }).then(() => {
-    loadJobs();
-  });
-}
-
-function deleteJob(id) {
-  fetch(`${API}/applications/${id}`, {
-    method: "DELETE"
-  }).then(() => loadJobs());
-}
-
-function logout() {
-  localStorage.removeItem("userId");
-  window.location.href = "index.html";
-}
-
-document.addEventListener("DOMContentLoaded", loadJobs);
 </script>
+
 
 </body>
 </html>
