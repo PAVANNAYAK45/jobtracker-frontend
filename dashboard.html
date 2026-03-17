@@ -1,154 +1,145 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Job Tracker</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
+<head>
+  <title>Job Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-  <body>
-    <div class="navbar">
-      <div class="nav-left">Job Application Tracker</div>
+<body>
 
-      <div class="nav-right">
-        <button onclick="logout()" class="logout-btn">Logout</button>
-      </div>
+  <div class="navbar">
+    <div class="nav-left">Job Application Tracker</div>
+    <div class="nav-right">
+      <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>Add Job</h2>
+
+      <input id="company" placeholder="Company">
+      <input id="role" placeholder="Role">
+      <input type="date" id="date">
+
+      <select id="status">
+        <option>APPLIED</option>
+        <option>INTERVIEW</option>
+        <option>REJECTED</option>
+        <option>OFFER</option>
+      </select>
+
+      <input id="notes" placeholder="Notes">
+
+      <button onclick="addJob()" class="add-btn">Add Job</button>
     </div>
 
-    <div class="container">
-      <div class="card">
-        <h2>Add Job</h2>
+    <div class="card">
+      <h2>Your Applications</h2>
 
-        <input id="company" placeholder="Company">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
 
-<input id="role" placeholder="Role">
-
-<input type="date" id="date">
-
-<select id="status">
-  <option>APPLIED</option>
-  <option>INTERVIEW</option>
-  <option>REJECTED</option>
-  <option>OFFER</option>
-</select>
-
-<input id="notes" placeholder="Notes">
-
-        <button onclick="addJob()" class="add-btn">Add Job</button>
-      </div>
-
-      <div class="card">
-        <h2>Your Applications</h2>
-
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Company</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-
-          <tbody id="jobsTable"></tbody>
-        </table>
-      </div>
+        <tbody id="jobsTable"></tbody>
+      </table>
     </div>
 
-    <script>
-      const API = "https://jobtracker-4w3y.onrender.com";
+  </div>
 
-      if (!localStorage.getItem("username")) {
-        window.location.href = "index.html";
-      }
-function loadJobs(){
+<script>
+const API = "https://jobtracker-4w3y.onrender.com";
 
-fetch("https://jobtracker-4w3y.onrender.com/applications")
-.then(res => res.json())
-.then(data => {
+// 🔴 IMPORTANT FIX
+const userId = localStorage.getItem("userId");
 
-const table = document.getElementById("jobsTable");
-table.innerHTML = "";
-
-data.forEach(job => {
-
-const row = document.createElement("tr");
-
-row.innerHTML = `
-<td>${job.id}</td>
-<td>${job.companyName}</td>
-<td>${job.jobRole}</td>
-<td>${job.status}</td>
-<td><button onclick="deleteJob(${job.id})">Delete</button></td>
-`;
-
-table.appendChild(row);
-
-});
-
-});
-
+if (!userId) {
+  window.location.href = "index.html";
 }
+
+// LOAD JOBS (USER BASED)
+function loadJobs() {
+  fetch(`${API}/applications/${userId}`)
+  .then(res => res.json())
+  .then(data => {
+
+    const table = document.getElementById("jobsTable");
+    table.innerHTML = "";
+
+    data.forEach(job => {
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${job.id}</td>
+        <td>${job.companyName}</td>
+        <td>${job.jobRole}</td>
+        <td>${job.status}</td>
+        <td><button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button></td>
+      `;
+
+      table.appendChild(row);
+    });
+  });
+}
+
+// ADD JOB (USER BASED)
 function addJob() {
 
-const companyEl = document.getElementById("company");
-const roleEl = document.getElementById("role");
-const dateEl = document.getElementById("date");
-const statusEl = document.getElementById("status");
-const notesEl = document.getElementById("notes");
+  const company = document.getElementById("company").value;
+  const role = document.getElementById("role").value;
+  const date = document.getElementById("date").value;
+  const status = document.getElementById("status").value;
+  const notes = document.getElementById("notes").value;
 
-if (!companyEl || !roleEl || !dateEl || !statusEl || !notesEl) {
-  alert("Input fields not found. Check IDs.");
-  return;
-}
-
-const company = companyEl.value;
-const role = roleEl.value;
-const date = dateEl.value;
-const status = statusEl.value;
-const notes = notesEl.value;
-
-fetch("https://jobtracker-4w3y.onrender.com/applications", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    companyName: company,
-    jobRole: role,
-    applicationDate: date,
-    status: status.toUpperCase(),
-    notes: notes
+  fetch(`${API}/applications/${userId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      companyName: company,
+      jobRole: role,
+      applicationDate: date,
+      status: status,
+      notes: notes
+    })
   })
-})
-.then(res => res.json())
-.then(() => {
+  .then(() => {
 
-  alert("Job added successfully");
+    alert("Job added successfully");
 
-  loadJobs();
+    loadJobs();
 
-  companyEl.value = "";
-  roleEl.value = "";
-  notesEl.value = "";
-
-});
+    document.getElementById("company").value = "";
+    document.getElementById("role").value = "";
+    document.getElementById("notes").value = "";
+  });
 }
-      async function deleteJob(id) {
-        await fetch(API + "/applications/" + id, {
-          method: "DELETE",
-        });
 
-        loadJobs();
-      }
+// DELETE
+function deleteJob(id) {
+  fetch(`${API}/applications/${id}`, {
+    method: "DELETE"
+  }).then(() => loadJobs());
+}
 
-      function logout() {
-        localStorage.removeItem("username");
+// LOGOUT
+function logout() {
+  localStorage.removeItem("userId");
+  window.location.href = "index.html";
+}
 
-        window.location.href = "index.html";
-      }
+loadJobs();
+</script>
 
-      loadJobs();
-    </script>
-  </body>
+</body>
 </html>

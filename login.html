@@ -1,71 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<title>Login - Job Tracker</title>
-<link rel="stylesheet" href="style.css">
-</head>
+  <head>
+    <title>Login - Job Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <h2>Login</h2>
 
-<div class="auth-container">
+        <input id="username" placeholder="Email" />
 
-<div class="auth-card">
+        <input id="password" type="password" placeholder="Password" />
 
-<h2>Login</h2>
+        <button onclick="login()">Login</button>
 
-<input id="email" placeholder="Email">
+        <p>No account? <a href="register.html">Register</a></p>
+      </div>
+    </div>
 
-<input id="password" type="password" placeholder="Password">
+    <script>
+      const API = "https://jobtracker-4w3y.onrender.com";
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-<button onclick="login()">Login</button>
+        const res = await fetch(API + "/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
 
-<p>No account? <a href="register.html">Register</a></p>
+        if (!res.ok) {
+          alert("No account found");
+          return;
+        }
 
-</div>
+        const data = await res.json();
 
-</div>
-
-<script>
-
-const API="https://jobtracker-4w3y.onrender.com"
-
-async function login(){
-
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
-
-const res=await fetch(API+"/auth/login",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-username:email,
-password:password
-})
-
-})
-
-if(!res.ok){
-
-alert("No account found")
-
-return
-
-}
-
-const user=await res.json()
-
-localStorage.setItem("username",user.username)
-
-window.location.href="dashboard.html"
-
-}
-
-</script>
-
-</body>
+        if (data.id) {
+          localStorage.setItem("userId", data.id);
+          localStorage.setItem("username", data.username);
+          window.location.href = "dashboard.html";
+        } else {
+          alert("No account found");
+        }
+      }
+    </script>
+  </body>
 </html>
