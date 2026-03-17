@@ -18,20 +18,20 @@
       <div class="card">
         <h2>Add Job</h2>
 
-        <input id="companyName" placeholder="Company" />
+        <input id="company" placeholder="Company">
 
-        <input id="jobRole" placeholder="Role" />
+<input id="role" placeholder="Role">
 
-        <input type="date" id="applicationDate" />
+<input type="date" id="date">
 
-        <select id="status">
-          <option value="APPLIED">Applied</option>
-          <option value="INTERVIEW">Interview</option>
-          <option value="REJECTED">Rejected</option>
-          <option value="OFFER">Offer</option>
-        </select>
+<select id="status">
+  <option>APPLIED</option>
+  <option>INTERVIEW</option>
+  <option>REJECTED</option>
+  <option>OFFER</option>
+</select>
 
-        <input id="notes" placeholder="Notes" />
+<input id="notes" placeholder="Notes">
 
         <button onclick="addJob()" class="add-btn">Add Job</button>
       </div>
@@ -89,38 +89,48 @@ table.appendChild(row);
 });
 
 }
-
 function addJob() {
 
-const company = document.getElementById("company").value;
-const role = document.getElementById("role").value;
-const date = document.getElementById("date").value;
-const status = document.getElementById("status").value;
-const notes = document.getElementById("notes").value;
+const companyEl = document.getElementById("company");
+const roleEl = document.getElementById("role");
+const dateEl = document.getElementById("date");
+const statusEl = document.getElementById("status");
+const notesEl = document.getElementById("notes");
 
-fetch(API + "/applications", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-companyName: company,
-jobRole: role,
-applicationDate: date,
-status: status.toUpperCase(),
-notes: notes
-})
+if (!companyEl || !roleEl || !dateEl || !statusEl || !notesEl) {
+  alert("Input fields not found. Check IDs.");
+  return;
+}
+
+const company = companyEl.value;
+const role = roleEl.value;
+const date = dateEl.value;
+const status = statusEl.value;
+const notes = notesEl.value;
+
+fetch("https://jobtracker-4w3y.onrender.com/applications", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    companyName: company,
+    jobRole: role,
+    applicationDate: date,
+    status: status.toUpperCase(),
+    notes: notes
+  })
 })
 .then(res => res.json())
-.then(data => {
+.then(() => {
 
-alert("Job added");
+  alert("Job added successfully");
 
-loadJobs();
+  loadJobs();
 
-document.getElementById("company").value="";
-document.getElementById("role").value="";
-document.getElementById("notes").value="";
+  companyEl.value = "";
+  roleEl.value = "";
+  notesEl.value = "";
 
 });
 }
