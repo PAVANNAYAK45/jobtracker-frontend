@@ -1,71 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Job Tracker</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="navbar">
-    <div class="nav-left">Job Application Tracker</div>
-    <div class="nav-right">
-      <button onclick="logout()" class="logout-btn">Logout</button>
-    </div>
+<div class="navbar">
+  <div>Job Application Tracker</div>
+  <button onclick="logout()" class="logout-btn">Logout</button>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Add Job</h2>
+
+    <input id="company" placeholder="Company">
+    <input id="role" placeholder="Role">
+    <input type="date" id="date">
+
+    <select id="status">
+      <option>APPLIED</option>
+      <option>INTERVIEW</option>
+      <option>REJECTED</option>
+      <option>OFFER</option>
+    </select>
+
+    <input id="notes" placeholder="Notes">
+
+    <button onclick="addJob()">Add Job</button>
   </div>
 
-  <div class="container">
+  <div class="card">
+    <h2>Your Applications</h2>
 
-    <div class="card">
-      <h2>Add Job</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
 
-      <input id="company" placeholder="Company">
-      <input id="role" placeholder="Role">
-      <input type="date" id="date">
-
-      <select id="status">
-        <option>APPLIED</option>
-        <option>INTERVIEW</option>
-        <option>REJECTED</option>
-        <option>OFFER</option>
-      </select>
-
-      <input id="notes" placeholder="Notes">
-
-      <button onclick="addJob()" class="add-btn">Add Job</button>
-    </div>
-
-    <div class="card">
-      <h2>Your Applications</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Company</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-
-        <tbody id="jobsTable"></tbody>
-      </table>
-    </div>
-
+      <tbody id="jobsTable"></tbody>
+    </table>
   </div>
+
+</div>
 
 <script>
 const API = "https://jobtracker-4w3y.onrender.com";
-
-// 🔴 IMPORTANT FIX
 const userId = localStorage.getItem("userId");
 
 if (!userId) {
   window.location.href = "index.html";
 }
 
-// LOAD JOBS (USER BASED)
 function loadJobs() {
   fetch(`${API}/applications/${userId}`)
   .then(res => res.json())
@@ -75,7 +70,6 @@ function loadJobs() {
     table.innerHTML = "";
 
     data.forEach(job => {
-
       const row = document.createElement("tr");
 
       row.innerHTML = `
@@ -83,7 +77,7 @@ function loadJobs() {
         <td>${job.companyName}</td>
         <td>${job.jobRole}</td>
         <td>${job.status}</td>
-        <td><button onclick="deleteJob(${job.id})" class="delete-btn">Delete</button></td>
+        <td><button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button></td>
       `;
 
       table.appendChild(row);
@@ -91,7 +85,6 @@ function loadJobs() {
   });
 }
 
-// ADD JOB (USER BASED)
 function addJob() {
 
   const company = document.getElementById("company").value;
@@ -102,9 +95,7 @@ function addJob() {
 
   fetch(`${API}/applications/${userId}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       companyName: company,
       jobRole: role,
@@ -112,27 +103,17 @@ function addJob() {
       status: status,
       notes: notes
     })
-  })
-  .then(() => {
-
-    alert("Job added successfully");
-
+  }).then(() => {
     loadJobs();
-
-    document.getElementById("company").value = "";
-    document.getElementById("role").value = "";
-    document.getElementById("notes").value = "";
   });
 }
 
-// DELETE
 function deleteJob(id) {
   fetch(`${API}/applications/${id}`, {
     method: "DELETE"
   }).then(() => loadJobs());
 }
 
-// LOGOUT
 function logout() {
   localStorage.removeItem("userId");
   window.location.href = "index.html";

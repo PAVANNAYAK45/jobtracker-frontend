@@ -33,7 +33,7 @@ body {
   cursor: pointer;
 }
 
-/* CENTER CONTAINER (LOGIN/REGISTER) */
+/* AUTH CENTER */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -47,14 +47,8 @@ body {
   padding: 30px;
   border-radius: 12px;
   width: 350px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   text-align: center;
-}
-
-/* HEADINGS */
-h2 {
-  margin-bottom: 20px;
-  color: #333;
 }
 
 /* INPUTS */
@@ -64,12 +58,6 @@ input, select {
   margin: 10px 0;
   border-radius: 8px;
   border: 1px solid #ccc;
-  transition: 0.2s;
-}
-
-input:focus {
-  border-color: #667eea;
-  outline: none;
 }
 
 /* BUTTON */
@@ -82,30 +70,28 @@ button {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
 }
 
 button:hover {
   background: #5a67d8;
 }
 
-/* LINK */
+/* LINKS */
 a {
   color: #667eea;
   text-decoration: none;
 }
 
-/* DASHBOARD CONTAINER */
+/* DASHBOARD */
 .container {
   width: 85%;
   margin: 30px auto;
 }
 
-/* DASHBOARD CARDS */
 .container .card {
   width: 100%;
-  text-align: left;
   margin-bottom: 25px;
+  text-align: left;
 }
 
 /* TABLE */
@@ -134,15 +120,4 @@ tr:nth-child(even) {
   background: #ff4d4d;
   padding: 6px 10px;
   border-radius: 5px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 600px) {
-  .card {
-    width: 90%;
-  }
-
-  .container {
-    width: 95%;
-  }
 }
