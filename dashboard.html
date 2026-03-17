@@ -58,7 +58,8 @@ const API = "https://jobtracker-4w3y.onrender.com";
 const userId = localStorage.getItem("userId");
 
 if (!userId) {
-  window.location.href = "index.html";
+  console.log("No user, redirecting...");
+  window.location.replace("index.html");
 }
 
 function loadJobs() {
@@ -119,7 +120,7 @@ function logout() {
   window.location.href = "index.html";
 }
 
-loadJobs();
+document.addEventListener("DOMContentLoaded", loadJobs);
 </script>
 
 </body>
